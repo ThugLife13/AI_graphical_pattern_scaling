@@ -1,0 +1,4 @@
+1. Add package for creating Windows' window
+2. Add package for opening and viewing graphic content
+3. Create window
+4. Open graphic content
