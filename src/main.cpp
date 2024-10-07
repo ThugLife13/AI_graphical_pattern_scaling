@@ -1,6 +1,7 @@
-#include <iostream>
+#include "../lib/core.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    core Core;
+    Core.startup();
     return 0;
 }

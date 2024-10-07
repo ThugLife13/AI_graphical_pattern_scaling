@@ -1,4 +1,4 @@
-1. Add package for creating Windows' window
-2. Add package for opening and viewing graphic content
+1. Add package for creating Windows' window                 (wxWidgets or Qt)
+2. Add package for opening and viewing graphic content      (OpenCV or Magick++ (ImageMagick))
 3. Create window
 4. Open graphic content

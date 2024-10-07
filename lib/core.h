@@ -1,14 +1,13 @@
-//
-// Created by mateu on 11.09.2024.
-//
-
 #ifndef CORE_H
 #define CORE_H
 
-
+#include <iostream>
 
 class core {
-
+public:
+    core();
+    ~core();
+    void startup();
 };
 
 

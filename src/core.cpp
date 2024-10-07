@@ -3,3 +3,13 @@
 //
 
 #include "../lib/core.h"
+
+core::core() {
+}
+
+core::~core() {
+}
+
+void core::startup() {
+    std::cout << "Hello, World from class!" << std::endl;
+}
