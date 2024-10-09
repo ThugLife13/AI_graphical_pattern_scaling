@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.20)
 project(AI_graphical_pattern_scaling)
 
 set(CMAKE_CXX_STANDARD 26)
