@@ -1,0 +1,49 @@
+25.11 - DONE
+1. Do main frame window
+2. "Upload" image
+
+26.11 - DONE
+1. Create new window
+2. Show uploaded image
+
+27.11 - DONE
+1. Manage imageFrame window
+
+28.11 - 02.12 - WIP
+1. Straight up photo with OpenCV
+2. Create photos
+
+03.12
+1. Automate GUI radio menu (based on images in tmp/images)
+2. Clearing images in tmp/images before generating
+
+04.12
+1. Finding edges of a rug in a picture
+
+05.12
+1. Straighting up an image
+
+06.12
+1. Finding edges and figures on a rug
+
+07.12
+1. Generating images with edges and figures shown on
+
+
+
+
+
+//TO REMEMBER!
+
+openCV - image processing lib
+//#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+//cv::Mat image = cv::imread("D:/My OpenCV Website/fly-agaric.jpg"); TODO change "\" from path taken by wxwidgets for "/" for opencv image processing
+
+spdlog - communicates lib
+//spdlog::info("Program started");
+//spdlog::warn("This is a warning");
+//spdlog::error("An error occurred");
+
+//spdlog::set_level(spdlog::level::debug);
+//spdlog::debug("Debug message: variable x = {}", 42);

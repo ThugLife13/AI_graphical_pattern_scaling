@@ -35,7 +35,7 @@ bool core::straightUpImage(std::string filePath) {
 }
 
 bool core::generateImages() {
-    //TODO xDDDDDD
+    //TODO creating images with shown located figures and objects
     
     // Ścieżka do obrazu wejściowego
     const std::string imagePath = "../tmp/images/straight.jpg";
