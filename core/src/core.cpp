@@ -7,10 +7,15 @@ core::~core() {
 }
 
 bool core::generate(wxString filePath) {
-    //TODO clearing tmp/images before generate
+    spdlog::info("generate: Clearing images");
+
+    if(!clearImages()) {
+        return false;
+    }
 
     spdlog::info("generate: Path to image {}", filePath.ToStdString());
 
+/*
     if (straightUpImage(filePath.ToStdString())) {
         spdlog::info("generate: Image straighted up");
         if (generateImages()) {
@@ -25,18 +30,66 @@ bool core::generate(wxString filePath) {
         spdlog::info("generate: Image failed to straight up - returning false");
         return false;
     }
+*/
+    return true;
+}
+
+bool core::clearImages() {
+    std::string folderPath = "..\\tmp\\images";
+    try {
+        if (!fs::exists(folderPath)) {
+            spdlog::error("clearImages: Folder does not exist {} ", folderPath);
+            return false;
+        }
+
+        for (const auto& entry : fs::directory_iterator(folderPath)) {
+            if (fs::is_regular_file(entry.path())) {
+                fs::remove(entry.path());
+            } else {
+                spdlog::info("clearImages: Folder does not exist {} ", entry.path().string());
+            }
+        }
+
+        spdlog::info("clearImages: Deleted everything in {} ", folderPath);
+        return true;
+
+    } catch (const fs::filesystem_error& e) {
+        spdlog::error("clearImages: Filesystem error {}", e.what());
+        return false;
+    } catch (const std::exception& e) {
+        spdlog::error("clearImages: General exception {}", e.what());
+        return false;
+    }
 }
 
 bool core::straightUpImage(std::string filePath) {
     spdlog::info("straightUpImage: Path to image {}", filePath.c_str());
     //TODO straightening up an image
     //TODO save straightened image to localization: /tmp/images/straight.jpg
+
+    // Load the image
+    cv::Mat image = cv::imread(filePath);
+    if (image.empty()) {
+        spdlog::error("Failed to load image from {}", filePath.c_str());
+        return false;
+    }
+
+    cv::Mat straightened;
+
+    // Save the straightened image
+    std::string outputPath = "D:\\Projects\\AI_graphical_pattern_scaling\\tmp\\images\\straight.jpg";
+    if (!cv::imwrite(outputPath, straightened)) {
+        spdlog::error("Failed to save straightened image to {}", outputPath);
+        return false;
+    }
+
+    spdlog::info("Successfully straightened and saved the image to {}", outputPath);
     return true;
 }
 
 bool core::generateImages() {
     //TODO creating images with shown located figures and objects
-    
+    /*
     // Ścieżka do obrazu wejściowego
     const std::string imagePath = "../tmp/images/straight.jpg";
     const std::string outputPath = "../tmp/images/";
@@ -132,6 +185,8 @@ bool core::generateImages() {
     for (const auto& [vertexCount, vertexImage] : vertexImages) {
         cv::imwrite(outputPath + "vertices_" + std::to_string(vertexCount) + ".jpg", vertexImage);
     }
-
+*/
     return true;
 }
+
+

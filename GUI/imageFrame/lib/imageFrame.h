@@ -13,6 +13,12 @@ public:
 
     wxRadioBox* radioBox;
 
+    wxArrayString radioChoices;
+
+    wxPanel* panelLeft;
+
+    wxPanel* panelRight;
+
 private:
     wxStaticBitmap* imageDisplay;
     imageFrameEventHandler ifehandlers;

@@ -6,8 +6,8 @@ imageFrame::imageFrame(wxWindow* parent, const wxString& filePath, bool &newWind
 
     wxPanel* panel = new wxPanel(this, wxID_ANY);
 
-    wxPanel* panelLeft = new wxPanel(panel, wxID_ANY, wxPoint(1, 1), wxSize(300, panel->GetSize().y));
-    wxPanel* panelRight = new wxPanel(panel, wxID_ANY, wxPoint(301, 1), wxSize((panel->GetSize().x)-300, panel->GetSize().y));
+    panelLeft = new wxPanel(panel, wxID_ANY, wxPoint(1, 1), wxSize(300, panel->GetSize().y));
+    panelRight = new wxPanel(panel, wxID_ANY, wxPoint(301, 1), wxSize((panel->GetSize().x)-300, panel->GetSize().y));
 
     wxStaticBitmap* imageDisplay = nullptr;
 
@@ -30,17 +30,8 @@ imageFrame::imageFrame(wxWindow* parent, const wxString& filePath, bool &newWind
         spdlog::info("imageFrame: Bad Path: {}", filePath.ToStdString());
     }
 
-    // Radio
-    wxArrayString radioChoices;
-    radioChoices.Add("Default image");
-    radioChoices.Add("Straight image");
-    radioChoices.Add("Gray scale image");
-    radioChoices.Add("2 vertices image");
-    radioChoices.Add("3 vertices image");
-    radioChoices.Add("4 vertices image");
-    radioChoices.Add("Combined vertices image");
-
-
+    //TODO radio
+    //Radio
     radioBox = new wxRadioBox(panelLeft, wxID_ANY, "Choose an Image", wxPoint(10, 150), wxDefaultSize, radioChoices, 1, wxRA_SPECIFY_COLS);
     radioBox->Bind(wxEVT_RADIOBOX, &imageFrameEventHandler::onRadioBoxChanged, &ifehandlers);
     radioBox->Hide();

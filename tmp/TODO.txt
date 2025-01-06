@@ -11,7 +11,7 @@
 
 28.11 - 02.12 - WIP
 1. Straight up photo with OpenCV
-2. Create photos
+2. Create photos*
 
 03.12
 1. Automate GUI radio menu (based on images in tmp/images)

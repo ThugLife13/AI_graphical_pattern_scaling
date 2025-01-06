@@ -33,6 +33,7 @@ private:
     core* newCore;
 
     void sizeCorrection(wxSize panelSize);
+    void updateRadioBox();
 
     bool& newWindowOpened;
 };

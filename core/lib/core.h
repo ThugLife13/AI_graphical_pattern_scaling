@@ -12,11 +12,14 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <filesystem>
 
 #include <spdlog/spdlog.h>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+namespace fs = std::filesystem;
 
 class core {
 public:
@@ -27,6 +30,7 @@ public:
 private:
     bool straightUpImage(std::string filePath);
     bool generateImages();
+    bool clearImages();
 };
 
 
