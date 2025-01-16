@@ -4,7 +4,7 @@
 
 void mainFrameEventHandlers::openFileButtonHandler(wxCommandEvent& evt) {
     //opening new window with image displayed
-    spdlog::info("openFileButtonHandler: Opening new window with chosen file button");
+    spdlog::info("openFileButtonHandler: Opening new window with chosen file");
 
 
     wxInitializer initializer;

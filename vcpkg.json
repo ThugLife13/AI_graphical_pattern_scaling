@@ -12,5 +12,8 @@
   }, {
     "name" : "spdlog",
     "version>=" : "1.15.0#1"
+  }, {
+    "name" : "opencv4",
+    "version>=" : "4.10.0#2"
   } ]
 }

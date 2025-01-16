@@ -18,7 +18,9 @@ add_executable(AI_graphical_pattern_scaling
         GUI/imageFrame/src/imageFrameEventHandler.cpp
         GUI/imageFrame/lib/imageFrameEventHandler.h
         core/src/core.cpp
-        core/lib/core.h)
+        core/lib/core.h
+        core/src/imageProcessing.cpp
+        core/lib/imageProcessing.h)
 
 find_package(wxWidgets CONFIG REQUIRED)
 
