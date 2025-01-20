@@ -17,11 +17,23 @@ bool imageProcessing::procesImages(wxString filePath) {
         return false;
     }
 
+    // is working
+    if (!createColorPalette("../tmp/images/gray.jpg")) {
+        spdlog::error("procesImages: Failed to create 8-bit gray palette");
+        return false;
+    }
+
+    /*
     // i wanna die
     if (!elementsDetection()) {
         spdlog::error("procesImages: Failed to detect elements");
         return false;
     }
+    */
+
+    pi = ExtractPatterns(filePath);
+
+    drawPatterns(pi, filePath);
 
     spdlog::info("procesImages: All components passed succesfully");
     return true;
@@ -44,7 +56,7 @@ bool imageProcessing::createGrayScale(wxString filePath) {
         return false;
     }
 
-    spdlog::info("createGrayScale: Created gray image succesfully");
+    spdlog::info("createGrayScale: Created gray image successfully");
     return true;
 }
 
@@ -86,26 +98,38 @@ bool imageProcessing::createColorPalette(wxString filePath) {
     new_image = new_image.reshape(3, image.rows);
     new_image.convertTo(new_image, CV_8U);
 
-    if (!cv::imwrite("../tmp/images/quantized.jpg", new_image))
-    {
-        spdlog::error("createColorPalette: Failed to create quantized image");
-        return false;
+    if (filePath == "../tmp/images/gray.jpg") {
+        if (!cv::imwrite("../tmp/images/grayQuantized.jpg", new_image))
+        {
+            spdlog::error("createColorPalette: Failed to create quantized image");
+            return false;
+        }
+        spdlog::info("createColorPalette: Created 8-bit gray image successfully");
+        return true;
     }
 
-    spdlog::info("createColorPalette: Created quantized image successfully");
-    return true;
+    else {
+        if (!cv::imwrite("../tmp/images/quantized.jpg", new_image))
+        {
+            spdlog::error("createColorPalette: Failed to create quantized image");
+            return false;
+        }
+        spdlog::info("createColorPalette: Created quantized image successfully");
+        return true;
+    }
 }
 
+/*
 bool imageProcessing::elementsDetection() {
 
     //ORB config
-    int nFeatures = 2000;           // key points
-    float scaleFactor = 1.2f;       // density of the pyramid
-    int nLevels = 4;                // number of pyramid levels
+    int nFeatures = 1000;           // key points
+    float scaleFactor = 1.1f;       // density of the pyramid
+    int nLevels = 8;                // number of pyramid levels
     int edgeThreshold = 19;         // edge threshold
 
     //matches config
-    float distanceThreshold = 60.0f;
+    float distanceThreshold = 40.0f;
 
     //ransac toleration
     double ransacReprojThreshold = 2.0;
@@ -113,7 +137,7 @@ bool imageProcessing::elementsDetection() {
 
     // paths
     std::string grayImagePath = "../tmp/images/gray.jpg";
-    std::string colorImagePath = "../tmp/images/quantized.jpg";
+    std::string colorImagePath = "../tmp/images/grayQuantized.jpg";
 
     // 1. Reading image in gray scale for features detection
     cv::Mat imgGray = cv::imread(grayImagePath, cv::IMREAD_GRAYSCALE);
@@ -329,4 +353,75 @@ bool imageProcessing::elementsDetection() {
     spdlog::info("elementsDetection: Image saved");
     return true;
 
+}
+*/
+
+std::vector<PatternInfo> imageProcessing::ExtractPatterns(wxString filePath)
+{
+    // 1. Wczytanie obrazu
+    cv::Mat inputImage = cv::imread(filePath.ToStdString());
+    cv::Mat gray = cv::imread("../tmp/images/gray.jpg");
+
+    if (inputImage.empty()) {
+        std::cerr << "Nie można wczytać obrazu: " << filePath << std::endl;
+        return {};
+    }
+
+    // 3. Usunięcie szumu - np. filtr gaussowski
+    cv::Mat blurred;
+    cv::GaussianBlur(gray, blurred, cv::Size(5, 5), 0);
+
+    // 4. Wykrywanie krawędzi
+    cv::Mat edges;
+    cv::Canny(blurred, edges, 100, 200);
+
+    // 5. Znajdowanie konturów
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(edges, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    // 6. Przetworzenie konturów: wyodrębnienie informacji o wzorach
+    std::vector<PatternInfo> patterns;
+    for (const auto & contour : contours) {
+        // Pomijamy zbyt małe kontury
+        double area = cv::contourArea(contour);
+        if (area < 50.0) {
+            continue;
+        }
+
+        // Prostokąt otaczający
+        cv::Rect boundingBox = cv::boundingRect(contour);
+
+        PatternInfo info;
+        info.contour = contour;
+        info.boundingBox = boundingBox;
+        info.area = area;
+
+        patterns.push_back(info);
+    }
+    return patterns;
+}
+
+bool imageProcessing::drawPatterns(std::vector<PatternInfo> patterns, wxString filePath) {
+
+    cv::Mat image = cv::imread(filePath.ToStdString(), cv::IMREAD_COLOR);
+    if (image.empty()) {
+        spdlog::error("drawPatterns: Nie można otworzyć obrazu: {}", filePath.ToStdString());
+        return false;
+    }
+
+    for (size_t i = 0; i < patterns.size(); ++i) {
+        const auto& info = patterns[i];
+        spdlog::info("drawPatterns: Creating bounding box no: {}", i);
+
+        cv::rectangle(image, info.boundingBox, cv::Scalar(0, 255, 0), 2);
+    }
+
+    wxString outputPath = "../tmp/images/detectedPatterns.jpg";
+    if (!cv::imwrite(outputPath.ToStdString(), image)) {
+        spdlog::error("drawPatterns: Nie można zapisać pliku: {}", outputPath.ToStdString());
+        return false;
+    }
+
+    spdlog::info("drawPatterns: Zapisano obraz z bounding boxami do pliku {}", outputPath.ToStdString());
+    return true;
 }
