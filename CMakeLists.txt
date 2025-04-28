@@ -20,7 +20,13 @@ add_executable(AI_graphical_pattern_scaling
         core/src/core.cpp
         core/lib/core.h
         core/src/imageProcessing.cpp
-        core/lib/imageProcessing.h)
+        core/lib/imageProcessing.h
+        GUI/decompositionFrame/src/decompositionFrame.cpp
+        GUI/decompositionFrame/lib/decompositionFrame.h
+        GUI/decompositionFrame/src/decompositionFrameEventHandler.cpp
+        GUI/decompositionFrame/lib/decompositionFrameEventHandler.h
+        core/src/imagePanel.cpp
+        core/lib/imagePanel.h)
 
 find_package(wxWidgets CONFIG REQUIRED)
 
