@@ -2,8 +2,19 @@
 #define CORE_H
 
 #include "imageProcessing.h"
+#include <vector>
 
-namespace fs = std::filesystem;
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
+
+struct MatchResult {
+    int posX;
+    int posY;
+    int width;
+    int height;
+    double accuracy;
+};
 
 class core {
 public:
@@ -11,10 +22,16 @@ public:
     ~core();
 
     bool generate(wxString filePath);
+
+    bool clearImages(std::string folderPath);
+
+    std::vector<std::vector<MatchResult>> matchEveryElement();
+
 private:
+    std::vector<MatchResult> findMatchingElements(wxString croppedImage, wxString mainImage);
+
     bool straightUpImage(std::string filePath);
     bool generateImages();
-    bool clearImages();
 };
 
 

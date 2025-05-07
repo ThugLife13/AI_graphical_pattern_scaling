@@ -19,6 +19,8 @@ public:
 
     wxPanel* panelRight;
 
+    wxButton* decomposeButton;
+
 private:
     wxStaticBitmap* imageDisplay;
     imageFrameEventHandler ifehandlers;

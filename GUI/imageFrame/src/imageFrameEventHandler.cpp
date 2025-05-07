@@ -1,6 +1,5 @@
 #include "../lib/imageFrameEventHandler.h"
 #include "../lib/imageFrame.h"
-#include "../../../core/lib/core.h"
 
 void imageFrameEventHandler::onCloseWindow(wxCloseEvent &evt) {
     newWindowOpened = false;
@@ -36,16 +35,51 @@ void imageFrameEventHandler::onResize(wxSizeEvent& event) {
 }
 
 
-void imageFrameEventHandler::onButtonClicked(wxCommandEvent& evt) {
-    spdlog::info("onButtonClicked: Button Clicked");
+void imageFrameEventHandler::onGenerateButtonClicked(wxCommandEvent& evt) {
+    spdlog::info("onGenerateButtonClicked: Button Clicked");
 
+
+
+    //TODO unhash it for release
+    /*
     if (newCore->generate(frame->originalFilePath)) {
-        spdlog::info("onButtonClicked: Images generated. Updating radioBox");
+        spdlog::info("onGenerateButtonClicked: Images generated. Updating radioBox");
         updateRadioBox();
-        spdlog::info("onButtonClicked: RadioBox updated");
-
+        spdlog::info("onGenerateButtonClicked: RadioBox updated");
     }
+    */
+
+    frame->decomposeButton->Show(true);
+    frame->Layout();
+    frame->Refresh();
 }
+
+
+void imageFrameEventHandler::onDecomposeButtonClicked(wxCommandEvent& evt) {
+    spdlog::info("onDecomposeButtonClicked: Button Clicked");
+    spdlog::info("onDecomposeButtonClicked: Opening new window");
+
+    wxString filePath = "..\\tmp\\images\\grayQuantized.jpg";
+
+    wxInitializer initializer;
+    if (!initializer) {
+        spdlog::error("onDecomposeButtonClicked: Failed to initialize wxWidgets!");
+    }
+    wxInitAllImageHandlers();
+
+    if (decompositionWindowOpened == true) {
+        spdlog::error("onDecomposeButtonClicked: New window already opened!");
+    } else {
+        decompositionWindowOpened = true;
+        spdlog::info("onDecomposeButtonClicked: Creating new image window");
+        spdlog::info("onDecomposeButtonClicked: Path: {}", filePath.ToStdString());
+
+        decompositionFrame* newWindow = new decompositionFrame(frame, filePath, decompositionWindowOpened);
+        newWindow->Show();
+    }
+
+}
+
 
 void imageFrameEventHandler::onRadioBoxChanged(wxCommandEvent& evt) {
     if (!imageDisplay || !imagePanel) return;

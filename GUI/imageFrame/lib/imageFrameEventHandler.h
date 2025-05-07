@@ -1,7 +1,7 @@
 #ifndef IMAGEFRAMEEVENTHANDLER_H
 #define IMAGEFRAMEEVENTHANDLER_H
 
-#include "../../../core/lib/core.h"
+#include "../../decompositionFrame/lib/decompositionFrame.h"
 
 class core;
 
@@ -17,7 +17,8 @@ public:
 
     void onResize(wxSizeEvent& evt);
     void onCloseWindow(wxCloseEvent& evt);
-    void onButtonClicked(wxCommandEvent& evt);
+    void onGenerateButtonClicked(wxCommandEvent& evt);
+    void onDecomposeButtonClicked(wxCommandEvent& evt);
     void onRadioBoxChanged(wxCommandEvent& evt);
 
 private:
@@ -34,6 +35,8 @@ private:
 
     void sizeCorrection(wxSize panelSize);
     void updateRadioBox();
+
+    bool decompositionWindowOpened = false;
 
     bool& newWindowOpened;
 };

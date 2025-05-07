@@ -6,7 +6,6 @@ void mainFrameEventHandlers::openFileButtonHandler(wxCommandEvent& evt) {
     //opening new window with image displayed
     spdlog::info("openFileButtonHandler: Opening new window with chosen file");
 
-
     wxInitializer initializer;
     if (!initializer) {
         spdlog::error("openFileButtonHandler: Failed to initialize wxWidgets!");

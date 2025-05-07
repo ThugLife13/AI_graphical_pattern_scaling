@@ -29,15 +29,18 @@ imageFrame::imageFrame(wxWindow* parent, const wxString& filePath, bool &newWind
         spdlog::error("imageFrame: Error loading image");
         spdlog::info("imageFrame: Bad Path: {}", filePath.ToStdString());
     }
-
-    //TODO radio
+    
     //Radio
     radioBox = new wxRadioBox(panelLeft, wxID_ANY, "Choose an Image", wxPoint(10, 150), wxDefaultSize, radioChoices, 1, wxRA_SPECIFY_COLS);
     radioBox->Bind(wxEVT_RADIOBOX, &imageFrameEventHandler::onRadioBoxChanged, &ifehandlers);
     radioBox->Hide();
 
-    wxButton* button = new wxButton(panelLeft, wxID_ANY, "Generate images", wxPoint(10, 10), wxSize(100, 30));
-    button->Bind(wxEVT_BUTTON, &imageFrameEventHandler::onButtonClicked, &ifehandlers);
+    wxButton* generateButton = new wxButton(panelLeft, wxID_ANY, "Generate images", wxPoint(10, 10), wxSize(150, 30));
+    generateButton->Bind(wxEVT_BUTTON, &imageFrameEventHandler::onGenerateButtonClicked, &ifehandlers);
+
+    decomposeButton = new wxButton(panelLeft, wxID_ANY, "Decompose image", wxPoint(10, 50), wxSize(150, 30));
+    decomposeButton->Bind(wxEVT_BUTTON, &imageFrameEventHandler::onDecomposeButtonClicked, &ifehandlers);
+    decomposeButton->Show(false);
 
     // Layout
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);

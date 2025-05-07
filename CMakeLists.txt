@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.15)
 project(AI_graphical_pattern_scaling)
 
 set(CMAKE_CXX_STANDARD 26)
@@ -34,9 +34,11 @@ find_package(spdlog CONFIG REQUIRED)
 
 find_package(OpenCV REQUIRED)
 
+find_package(nlohmann_json REQUIRED)
+
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-target_link_libraries(AI_graphical_pattern_scaling PRIVATE wx::core wx::base spdlog::spdlog ${OpenCV_LIBS})
+target_link_libraries(AI_graphical_pattern_scaling PRIVATE wx::core wx::base spdlog::spdlog ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
 
 target_compile_options(AI_graphical_pattern_scaling PRIVATE "/utf-8")
 

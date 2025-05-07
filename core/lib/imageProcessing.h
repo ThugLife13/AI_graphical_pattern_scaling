@@ -21,11 +21,17 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
 
+
+
 class imageProcessing {
 public:
     bool procesImages(wxString filePath);
     bool createGrayScale(wxString filePath);
     bool createColorPalette(wxString filePath);
+    bool trimWhiteBorder(wxString filePath);
+    bool createQuarterImage(wxString filePath);
+    static bool fillSelectionWithWhite(const wxRect& selection);
+
 };
 
 
