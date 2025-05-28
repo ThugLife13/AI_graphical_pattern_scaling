@@ -2,6 +2,7 @@
 #define IMAGEFRAMEEVENTHANDLER_H
 
 #include "../../decompositionFrame/lib/decompositionFrame.h"
+#include <filesystem>
 
 class core;
 

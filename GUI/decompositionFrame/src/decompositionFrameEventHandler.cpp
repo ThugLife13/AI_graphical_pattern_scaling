@@ -113,7 +113,12 @@ void decompositionFrameEventHandler::onAnalyseButton(wxCommandEvent &event) {
         fs::path("..\\tmp\\images\\forAnalyzing.jpg"),
         fs::copy_options::overwrite_existing);
 
-    //TODO - analyze image and draw rectangles
+    core Core;
+    //TODO - unhash for analyzing
+    //Core.matchEveryElement();
+
+    //TODO - unhash for drawing
+    Core.drawAllRectangles();
 
     frame->choiceBox->Show(false);
     frame->endDecompositionPhaseButton->Show(false);
@@ -122,7 +127,7 @@ void decompositionFrameEventHandler::onAnalyseButton(wxCommandEvent &event) {
     frame->rightPanel->Layout();
     frame->rightPanel->Refresh();
 
-    frame->originalImage.LoadFile("../tmp/images/forAnalyzing.jpg");
+    frame->originalImage.LoadFile("../tmp/images/analyzed.jpg");
     frame->originalBitmap = wxBitmap(frame->originalImage);
     frame->imageDisplay->clearSelection();
     frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);

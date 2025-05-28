@@ -1,9 +1,20 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 project(AI_graphical_pattern_scaling)
 
 set(CMAKE_CXX_STANDARD 26)
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+
+if(MSVC)
+    add_compile_options(/utf-8)
+else()
+    add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)
+endif()
+
+if(MSVC)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup")
+else()
+    add_link_options(-mwindows)
+endif()
 
 add_executable(AI_graphical_pattern_scaling
         core/src/main.cpp
@@ -28,18 +39,20 @@ add_executable(AI_graphical_pattern_scaling
         core/src/imagePanel.cpp
         core/lib/imagePanel.h)
 
+
 find_package(wxWidgets CONFIG REQUIRED)
-
 find_package(spdlog CONFIG REQUIRED)
-
 find_package(OpenCV REQUIRED)
-
 find_package(nlohmann_json REQUIRED)
 
-include_directories(${OpenCV_INCLUDE_DIRS})
+target_include_directories(AI_graphical_pattern_scaling PRIVATE
+        ${OpenCV_INCLUDE_DIRS}
+)
 
-target_link_libraries(AI_graphical_pattern_scaling PRIVATE wx::core wx::base spdlog::spdlog ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
-
-target_compile_options(AI_graphical_pattern_scaling PRIVATE "/utf-8")
-
-set_target_properties(AI_graphical_pattern_scaling PROPERTIES LINK_FLAGS "/ENTRY:WinMainCRTStartup")
+target_link_libraries(AI_graphical_pattern_scaling PRIVATE
+        wx::core
+        wx::base
+        spdlog::spdlog
+        ${OpenCV_LIBS}
+        nlohmann_json::nlohmann_json
+)

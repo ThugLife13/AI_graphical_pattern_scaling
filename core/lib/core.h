@@ -2,11 +2,14 @@
 #define CORE_H
 
 #include "imageProcessing.h"
+#include <nlohmann/json.hpp>
 #include <vector>
-
-#include <experimental/filesystem>
-
-namespace fs = std::experimental::filesystem;
+#include <fstream>
+#include <cmath>
+#include <filesystem>
+#include <omp.h>
+#include <atomic>
+#include <thread>
 
 struct MatchResult {
     int posX;
@@ -14,6 +17,16 @@ struct MatchResult {
     int width;
     int height;
     double accuracy;
+
+    //First color
+    int fColorR;
+    int fColorG;
+    int fColorB;
+
+    //Second color
+    int sColorR;
+    int sColorG;
+    int sColorB;
 };
 
 class core {
@@ -25,13 +38,22 @@ public:
 
     bool clearImages(std::string folderPath);
 
-    std::vector<std::vector<MatchResult>> matchEveryElement();
+    bool matchEveryElement();
+
+    bool drawAllRectangles();
 
 private:
-    std::vector<MatchResult> findMatchingElements(wxString croppedImage, wxString mainImage);
+    bool findMatchingElements(wxString croppedImage, wxString mainImage, wxColour fColor, wxColour sColor);
 
-    bool straightUpImage(std::string filePath);
-    bool generateImages();
+    bool saveToJson(std::vector<MatchResult> results);
+
+    bool firstDrawing = true;
+
+    int jsonCounter = 1;
+
+    bool drawRectanglesFromJson(wxString jsonPath);
+
+    bool firstSaving = true;
 };
 
 

@@ -1,6 +1,8 @@
 #include "../lib/imageFrameEventHandler.h"
 #include "../lib/imageFrame.h"
 
+namespace fs = std::filesystem;
+
 void imageFrameEventHandler::onCloseWindow(wxCloseEvent &evt) {
     newWindowOpened = false;
     evt.Skip();
@@ -37,8 +39,6 @@ void imageFrameEventHandler::onResize(wxSizeEvent& event) {
 
 void imageFrameEventHandler::onGenerateButtonClicked(wxCommandEvent& evt) {
     spdlog::info("onGenerateButtonClicked: Button Clicked");
-
-
 
     //TODO unhash it for release
     /*
@@ -152,7 +152,7 @@ void imageFrameEventHandler::updateRadioBox() {
     frame->radioChoices.clear();
     frame->radioChoices.push_back("Original image");
     for (const auto& entry : fs::directory_iterator(folderPath)) {
-        if (fs::is_regular_file(entry.path())) {
+        if (entry.is_regular_file()) {
             frame->radioChoices.push_back(entry.path().filename().string());
         }
     }
