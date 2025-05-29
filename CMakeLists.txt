@@ -37,13 +37,15 @@ add_executable(AI_graphical_pattern_scaling
         GUI/decompositionFrame/src/decompositionFrameEventHandler.cpp
         GUI/decompositionFrame/lib/decompositionFrameEventHandler.h
         core/src/imagePanel.cpp
-        core/lib/imagePanel.h)
+        core/lib/imagePanel.h
+)
 
 
 find_package(wxWidgets CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(nlohmann_json REQUIRED)
+#find_package(OpenMP REQUIRED)
 
 target_include_directories(AI_graphical_pattern_scaling PRIVATE
         ${OpenCV_INCLUDE_DIRS}

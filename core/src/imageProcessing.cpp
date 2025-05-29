@@ -54,6 +54,7 @@ bool imageProcessing::createGrayScale(wxString filePath) {
             spdlog::error("createGrayScale: Failed to create quantized gray image");
             return false;
         }
+
         //TODO hash it if want to do 1/4
         /**/
         if (!cv::imwrite("../tmp/images/toDecompose.jpg", gray)) {
@@ -61,6 +62,7 @@ bool imageProcessing::createGrayScale(wxString filePath) {
             return false;
         }
         /**/
+
         spdlog::info("createGrayScale: Created quantized gray image successfully");
         return true;
     }
@@ -201,6 +203,7 @@ bool imageProcessing::createQuarterImage(wxString filePath) {
         spdlog::error("quarterImage: Failed to create quarter image");
         return false;
     }
+
 /* //TODO unhash it if want to do 1/4
     if (!cv::imwrite("../tmp/images/toDecompose.jpg", quarter)) {
         spdlog::error("quarterImage: Failed to create quarter image");

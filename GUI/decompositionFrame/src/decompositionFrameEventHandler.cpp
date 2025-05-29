@@ -114,8 +114,9 @@ void decompositionFrameEventHandler::onAnalyseButton(wxCommandEvent &event) {
         fs::copy_options::overwrite_existing);
 
     core Core;
+
     //TODO - unhash for analyzing
-    //Core.matchEveryElement();
+    Core.matchEveryElement();
 
     //TODO - unhash for drawing
     Core.drawAllRectangles();
