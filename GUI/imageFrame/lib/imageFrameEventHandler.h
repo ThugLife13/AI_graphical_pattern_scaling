@@ -2,6 +2,8 @@
 #define IMAGEFRAMEEVENTHANDLER_H
 
 #include "../../decompositionFrame/lib/decompositionFrame.h"
+#include "../../../core/lib/aiGeneration.h"
+#include "../../../core/lib/aiRecognition.h"
 #include <filesystem>
 
 class core;

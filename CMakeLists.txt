@@ -38,6 +38,10 @@ add_executable(AI_graphical_pattern_scaling
         GUI/decompositionFrame/lib/decompositionFrameEventHandler.h
         core/src/imagePanel.cpp
         core/lib/imagePanel.h
+        core/src/aiRecognition.cpp
+        core/lib/aiRecognition.h
+        core/src/aiGeneration.cpp
+        core/lib/aiGeneration.h
 )
 
 

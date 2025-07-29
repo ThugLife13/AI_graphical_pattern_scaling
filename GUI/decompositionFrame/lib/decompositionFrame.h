@@ -31,14 +31,20 @@ public:
     wxButton* analyseImagesButton;
     wxButton* clearButton;
     wxButton* copyButton;
+    wxButton* saveNewAccuracyIntoJsonButton;
+    wxButton* endSavingAccuracyPhaseButton;
 
     wxChoice* choiceBox;
+    wxChoice* choiceBoxDrawn;
 
     wxBoxSizer* rightSizer;
 
     wxPanel* rightPanel;
 
+    wxSpinCtrl* accuracySpinCtrl;
+
     std::vector<wxString> decomposedImages;
+    std::vector<wxString> drawnImages;
 };
 
 

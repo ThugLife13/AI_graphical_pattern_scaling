@@ -13,6 +13,7 @@ void decompositionFrameEventHandler::scaleSliderEventHandler(wxCommandEvent &eve
     lastSliderValue = currentValue;
     double zoom = currentValue / 100.0;
     frame->applyZoom(zoom);
+    currentZoom = zoom;
 }
 
 void decompositionFrameEventHandler::onClearButton(wxCommandEvent& event) {
@@ -90,6 +91,7 @@ void decompositionFrameEventHandler::onEndDecompositionPhaseButton(wxCommandEven
         frame->choiceBox->Append(item);
     }
 
+    //2'nd view
     frame->analyseImagesButton->Show(true);
     frame->choiceBox->Show(true);
     frame->rightPanel->Layout();
@@ -97,15 +99,44 @@ void decompositionFrameEventHandler::onEndDecompositionPhaseButton(wxCommandEven
 }
 
 void decompositionFrameEventHandler::onChooseButton(wxCommandEvent &event) {
-    workingImage = event.GetInt();
-    spdlog::info(frame->decomposedImages[event.GetInt()].ToStdString());
+    if (beforeAnalysing) {
+        workingImage = event.GetInt();
+        spdlog::info(frame->decomposedImages[event.GetInt()].ToStdString());
 
-    std::string tmpPath = "../tmp/decomposedImages/" + frame->decomposedImages[workingImage].ToStdString() + ".jpg";
+        std::string tmpPath = "../tmp/decomposedImages/" + frame->decomposedImages[workingImage].ToStdString() + ".jpg";
 
-    frame->originalImage.LoadFile(tmpPath);
-    frame->originalBitmap = wxBitmap(frame->originalImage);
-    frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
-    frame->imageDisplay->Refresh();
+        frame->originalImage.LoadFile(tmpPath);
+        frame->originalBitmap = wxBitmap(frame->originalImage);
+        frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
+        frame->imageDisplay->Refresh();
+    }
+    else {
+        workingImage = event.GetInt();
+        spdlog::info(frame->drawnImages[event.GetInt()].ToStdString());
+
+        std::string tmpPath = "../tmp/analyzed/" + frame->drawnImages[workingImage].ToStdString() + ".jpg";
+
+        frame->originalImage.LoadFile(tmpPath);
+        frame->originalBitmap = wxBitmap(frame->originalImage);
+        frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
+        frame->imageDisplay->Refresh();
+
+        if ("../tmp/analyzed/" + frame->drawnImages[workingImage].ToStdString() + ".jpg" == "../tmp/analyzed/analyzedCombined.jpg") {
+            frame->accuracySpinCtrl->Show(false);
+            frame->saveNewAccuracyIntoJsonButton->Show(false);
+            frame->rightPanel->Layout();
+            frame->rightPanel->Refresh();
+        }
+        else {
+            frame->accuracySpinCtrl->Show(true);
+            frame->saveNewAccuracyIntoJsonButton->Show(true);
+            frame->rightPanel->Layout();
+            frame->rightPanel->Refresh();
+        }
+
+        //on switch returning to base accuracy
+        frame->accuracySpinCtrl->SetValue(selectedBaseAccuracy);
+    }
 }
 
 void decompositionFrameEventHandler::onAnalyseButton(wxCommandEvent &event) {
@@ -113,25 +144,138 @@ void decompositionFrameEventHandler::onAnalyseButton(wxCommandEvent &event) {
         fs::path("..\\tmp\\images\\forAnalyzing.jpg"),
         fs::copy_options::overwrite_existing);
 
+    frame->choiceBox->Show(false);
+    frame->endDecompositionPhaseButton->Show(false);
+    frame->copyButton->Show(false);
+    frame->clearButton->Show(false);
+    frame->analyseImagesButton->Show(false);
+
     core Core;
 
     //TODO - unhash for analyzing
     Core.matchEveryElement();
 
     //TODO - unhash for drawing
-    Core.drawAllRectangles();
+    Core.drawAllRectangles(selectedBaseAccuracy);
 
-    frame->choiceBox->Show(false);
-    frame->endDecompositionPhaseButton->Show(false);
-    frame->copyButton->Show(false);
-    frame->clearButton->Show(false);
+    beforeAnalysing = false;
+
+    updateChoiceBoxDrawn();
+    frame->accuracySpinCtrl->Show(true);
+
+    frame->originalImage.LoadFile("../tmp/analyzed/analyzedCombined.jpg");
+    frame->originalBitmap = wxBitmap(frame->originalImage);
+
+    frame->imageDisplay->clearSelection();
+    frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
+
     frame->rightPanel->Layout();
     frame->rightPanel->Refresh();
+    frame->imageDisplay->Refresh();
+}
 
-    frame->originalImage.LoadFile("../tmp/images/analyzed.jpg");
+void decompositionFrameEventHandler::updateChoiceBoxDrawn() {
+    frame->drawnImages.clear();
+    core Core;
+
+    wxString tmpString = "analyzedCombined";
+
+    spdlog::info("updateChoiceBoxDrawn: Selected cropping");
+
+    frame->drawnImages.push_back(tmpString);
+
+    for (const auto& entry : fs::directory_iterator("..\\tmp\\jsons")) {
+        if (entry.is_regular_file()) {
+            spdlog::info("updateChoiceBoxDrawn: Full path {}", entry.path().string());
+            fs::path folder_name = entry.path().stem();
+
+            //fs::create_directory("../tmp/cropped" / folder_name);
+            Core.drawRectanglesFromJson(folder_name.string(), 0.5, true);
+
+            spdlog::info("updateChoiceBoxDrawn: Short name: {}", folder_name.string());
+            frame->drawnImages.push_back(folder_name.string());
+        }
+    }
+
+    frame->choiceBoxDrawn->Clear();
+    for (const wxString& item : frame->drawnImages) {
+        frame->choiceBoxDrawn->Append(item);
+    }
+
+    frame->choiceBoxDrawn->Show(true);
+    frame->rightPanel->Layout();
+    frame->rightPanel->Refresh();
+}
+
+void decompositionFrameEventHandler::onAccuracySpinCtrl(wxCommandEvent &event) {
+    tmpAccuracy = event.GetInt() / 100.0f;
+
+    core Core;
+    Core.drawRectanglesFromJson(frame->drawnImages[workingImage].ToStdString(), tmpAccuracy, true);
+
+    std::string tmpPath = "../tmp/analyzed/" + frame->drawnImages[workingImage].ToStdString() + ".jpg";
+    frame->originalImage.LoadFile(tmpPath);
     frame->originalBitmap = wxBitmap(frame->originalImage);
-    frame->imageDisplay->clearSelection();
+    frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
+    frame->imageDisplay->Refresh();
+    frame->applyZoom(currentZoom);
+}
+
+void decompositionFrameEventHandler::onSaveAccuracyButton(wxCommandEvent &event) {
+
+    fs::create_directory("../tmp/jsons/newAccuracy");
+
+    core Core;
+    Core.saveWithNewAccuracy("../tmp/jsons/" + frame->drawnImages[workingImage] + ".json",
+        "../tmp/jsons/newAccuracy/" + frame->drawnImages[workingImage] + ".json", tmpAccuracy);
+
+    frame->endSavingAccuracyPhaseButton->Show(true);
+    frame->rightPanel->Layout();
+    frame->rightPanel->Refresh();
+}
+
+void decompositionFrameEventHandler::onEndSavingAccuracyPhaseButton(wxCommandEvent &event) {
+    std::vector<wxString> tmp;
+    std::vector<wxString> missing;
+    for (const auto& entry : fs::directory_iterator("..\\tmp\\jsons\\newAccuracy")) {
+        if (entry.is_regular_file()) {
+            tmp.push_back(entry.path().stem().string());
+        }
+    }
+
+    for (const auto& image : frame->drawnImages) {
+        bool appeared = false;
+        if (image == "analyzedCombined") {
+            continue;
+        }
+
+        for (const auto& path : tmp) {
+            if (path.ToStdString() == image) {
+                appeared = true;
+            }
+        }
+        if (!appeared) {
+            missing.push_back(image);
+        }
+    }
+
+    for (const auto& toCopy : missing) {
+        std::string from;
+        std::string to;
+
+        from = "..\\tmp\\jsons\\" + toCopy + ".json";
+        to = "..\\tmp\\jsons\\newAccuracy\\" + toCopy + ".json";
+
+        spdlog::info("onEndSavingAccuracyPhaseButton: Copying from: {}, to: {}", from, to);
+        fs::copy_file(from,to);
+    }
+
+    //selecting image to display
+    std::string tmpPath = "../tmp/analyzed/analyzedCombined.jpg";
+    frame->originalImage.LoadFile(tmpPath);
+    frame->originalBitmap = wxBitmap(frame->originalImage);
     frame->imageDisplay->setBitmap(frame->originalBitmap, frame->currentZoom);
     frame->imageDisplay->Refresh();
 
+    wxTheApp->Exit();
 }

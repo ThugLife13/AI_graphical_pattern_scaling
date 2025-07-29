@@ -20,30 +20,61 @@ decompositionFrame::decompositionFrame(wxWindow *parent, const wxString &filePat
     rightPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
     mainSizer->Add(rightPanel, 1, wxEXPAND);
 
-
     rightSizer = new wxBoxSizer(wxVERTICAL);
     rightPanel->SetSizer(rightSizer);
 
+    //second view
     choiceBox = new wxChoice(rightPanel, wxID_ANY);
     rightSizer->Add(choiceBox, 0, wxALL, 10);
     choiceBox->Show(false);
 
+    //always
     scaleSlider = new wxSlider(rightPanel, wxID_ANY, 100, 10, 200, wxPoint(10, 10), wxSize(150, 30), wxHORIZONTAL);
     rightSizer->Add(scaleSlider, 0, wxALL | wxEXPAND, 10);
 
+    //first view
     clearButton = new wxButton(rightPanel, wxID_ANY, "Clear Selection");
     rightSizer->Add(clearButton, 0, wxALL, 10);
 
+    //first view
     copyButton = new wxButton(rightPanel, wxID_ANY, "Copy Selection");
     rightSizer->Add(copyButton, 0, wxALL, 10);
 
+    //second view
     analyseImagesButton = new wxButton(rightPanel, wxID_ANY, "Analyse images");
     rightSizer->Add(analyseImagesButton, 0, wxALL, 10);
     analyseImagesButton->Show(false);
 
+    //first/second view
     endDecompositionPhaseButton = new wxButton(rightPanel, wxID_ANY, "End Decomposition phase");
     rightSizer->Add(endDecompositionPhaseButton, 0, wxALL | wxEXPAND, 10);
     endDecompositionPhaseButton->Show(false);
+
+    //third view
+    //choice box for drawn images
+    choiceBoxDrawn = new wxChoice(rightPanel, wxID_ANY);
+    rightSizer->Add(choiceBoxDrawn, 0, wxALL, 10);
+    choiceBoxDrawn->Show(false);
+
+    //third view
+    //accuracy
+    accuracySpinCtrl = new wxSpinCtrl(rightPanel, wxID_ANY);
+    accuracySpinCtrl->SetRange(50,100);
+    accuracySpinCtrl->SetValue(50);
+    rightSizer->Add(accuracySpinCtrl, 0, wxALL, 10);
+    accuracySpinCtrl->Show(false);
+
+    //third view
+    //button for accepting new accuracy
+    saveNewAccuracyIntoJsonButton = new wxButton(rightPanel, wxID_ANY, "Save json with new accuracy");
+    rightSizer->Add(saveNewAccuracyIntoJsonButton, 0, wxALL, 10);
+    saveNewAccuracyIntoJsonButton->Show(false);
+
+    //third view
+    //button for ending selecting accuracy phase
+    endSavingAccuracyPhaseButton = new wxButton(rightPanel, wxID_ANY, "Finish saving accuracy");
+    rightSizer->Add(endSavingAccuracyPhaseButton, 0, wxALL, 10);
+    endSavingAccuracyPhaseButton->Show(false);
 
 
     if (originalImage.LoadFile(filePath)) {
@@ -61,12 +92,18 @@ decompositionFrame::decompositionFrame(wxWindow *parent, const wxString &filePat
         leftPanel->Refresh();
     }
 
+    //handlers
     clearButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onClearButton, &dfehandlers);
     copyButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onCopyButton, &dfehandlers);
     scaleSlider->Bind(wxEVT_SLIDER, &decompositionFrameEventHandler::scaleSliderEventHandler, &dfehandlers);
     endDecompositionPhaseButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onEndDecompositionPhaseButton, &dfehandlers);
     choiceBox->Bind(wxEVT_CHOICE, &decompositionFrameEventHandler::onChooseButton, &dfehandlers);
     analyseImagesButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onAnalyseButton, &dfehandlers);
+    //new
+    choiceBoxDrawn->Bind(wxEVT_CHOICE, &decompositionFrameEventHandler::onChooseButton, &dfehandlers);
+    accuracySpinCtrl->Bind(wxEVT_SPINCTRL, &decompositionFrameEventHandler::onAccuracySpinCtrl, &dfehandlers);
+    saveNewAccuracyIntoJsonButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onSaveAccuracyButton, &dfehandlers);
+    endSavingAccuracyPhaseButton->Bind(wxEVT_BUTTON, &decompositionFrameEventHandler::onEndSavingAccuracyPhaseButton, &dfehandlers);
 }
 
 void decompositionFrame::applyZoom(double zoom) {
@@ -91,8 +128,3 @@ wxBitmap decompositionFrame::getCurrentBitmap() {
 }
 
 decompositionFrame::~decompositionFrame() {}
-
-/*
- * Copy Selection zamienić na Decompose
- * Dodać przycisk "z
- */

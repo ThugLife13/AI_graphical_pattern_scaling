@@ -1,7 +1,19 @@
 #include "../lib/mainFrameEventHandlers.h"
 #include "../lib/mainFrame.h"
 
+void mainFrameEventHandlers::onChoice(wxCommandEvent &event) {
+    std::string choice = event.GetString().ToStdString();
 
+    if (choice == "PREP") {
+        frame->switchPhase(PREP);
+    } else if (choice == "AI_RECOGNITION") {
+        frame->switchPhase(AI_RECOGNITION);
+    } else if (choice == "AI_GENERATION") {
+        frame->switchPhase(AI_GENERATION);
+    }
+}
+
+//PREP PHASE
 void mainFrameEventHandlers::openFileButtonHandler(wxCommandEvent& evt) {
     //opening new window with image displayed
     spdlog::info("openFileButtonHandler: Opening new window with chosen file");
@@ -14,10 +26,12 @@ void mainFrameEventHandlers::openFileButtonHandler(wxCommandEvent& evt) {
 
     if (fileOpened == false) {
         frame->errorText1->Show();
+        frame->leftSizer->Layout();
         spdlog::error("openFileButtonHandler: File not opened!");
     } else {
         if (newWindowOpened == true) {
             frame->errorText2->Show();
+            frame->leftSizer->Layout();
             spdlog::error("openFileButtonHandler: New window already opened!");
         } else {
             newWindowOpened = true;
@@ -31,7 +45,6 @@ void mainFrameEventHandlers::openFileButtonHandler(wxCommandEvent& evt) {
     }
 }
 
-
 void mainFrameEventHandlers::openFilePickerHandler(wxCommandEvent& evt) {
     if (frame) {
         frame->path = frame->filePicker->GetPath();
@@ -40,3 +53,18 @@ void mainFrameEventHandlers::openFilePickerHandler(wxCommandEvent& evt) {
         frame->errorText1->Hide();
     }
 }
+
+void mainFrameEventHandlers::onSizeXSpinCtrl(wxCommandEvent &event) {
+    selectedSizeX = event.GetInt();
+}
+
+void mainFrameEventHandlers::onSizeYSpinCtrl(wxCommandEvent &event) {
+    selectedSizeY = event.GetInt();
+}
+
+//AI_RECOGNITION PHASE
+void mainFrameEventHandlers::startRecognition(wxCommandEvent &evt){
+    aiRecognition* aiRec = new aiRecognition();
+    aiRec->startRecognition(frame->imageSizeX, frame->imageSizeY, selectedSizeX, selectedSizeY);
+}
+//AI_GENERATION PHASE
