@@ -7,13 +7,13 @@
     "version>=" : "3.2.5#3",
     "$comment" : "    find_package(wxWidgets CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE wx::core wx::base)\n"
   }, {
-    "name" : "opencv2",
-    "version>=" : "2.4.13.7#22"
-  }, {
     "name" : "spdlog",
     "version>=" : "1.15.0#1"
   }, {
     "name" : "nlohmann-json",
     "version>=" : "3.12.0"
+  }, {
+    "name" : "opencv4",
+    "version>=" : "4.11.0#1"
   } ]
 }

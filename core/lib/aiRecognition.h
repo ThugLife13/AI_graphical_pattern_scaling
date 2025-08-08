@@ -6,6 +6,11 @@
 #define AIRECOGNITION_H
 
 #include "core.h"
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 enum patternType {
     STRAIGHT_VERTICAL_LINE = 0,
@@ -32,7 +37,6 @@ public:
 private:
     //generate meta of whole picture and decomposed elements
     bool generateMetaData();
-    //TODO - get the size and pos of each decomposed (based from original image)
 
     //recognize all patterns
     bool recognizePatterns();
@@ -51,6 +55,8 @@ private:
     float isGridPattern();
     float isAlternatingCircumferencePattern();
     float isAlternatingGridPattern();
+
+    std::vector<std::tuple<std::string, int, int, int, int>> decomposedPositions;
 
     //random pattern (defining the spread of items on image)
 

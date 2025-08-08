@@ -32,8 +32,6 @@ mainFrame::mainFrame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, w
     choiceBox->Append(3, choices);
     choiceBox->SetSelection(0);
 
-    getImageSize();
-
     switchPhase(PREP);
 
     choiceBox->Bind(wxEVT_CHOICE, &mainFrameEventHandlers::onChoice, &mfehandlers);
@@ -88,6 +86,8 @@ void mainFrame::switchPhase(PHASE newPhase) {
     }
 
     if (currentPhase == AI_RECOGNITION) {
+        getImageSize();
+
         spdlog::info("switchPhase: Switching to AI_RECOGNITION phase");
         auto* AIRecognitionTitleText = new wxStaticText(leftPanel, wxID_ANY, wxT("AI RECOGNITION PHASE"));
         leftSizer->Add(AIRecognitionTitleText, 0, wxALL, 10);
@@ -162,7 +162,7 @@ void mainFrame::switchPhase(PHASE newPhase) {
 
 void mainFrame::getImageSize() {
     std::string filePath = "../tmp/images/grayQuantized.jpg";
-    cv::Mat img = cv::imread(filePath, CV_LOAD_IMAGE_UNCHANGED);
+    cv::Mat img = cv::imread(filePath);
     if (img.empty()) {
         spdlog::error("getImageSize: Cannot read file {}", filePath);
     } else {

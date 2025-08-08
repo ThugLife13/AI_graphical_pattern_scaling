@@ -237,7 +237,7 @@ void applyNonMaximumSuppression(std::vector<MatchResult>& results) {
 }
 
 std::vector<MatchResult> findMatchingElementsParallel(
-    //TODO - new way of finding
+    //TODO - new way of finding matches
     const cv::Mat& baseRotated, //we are looking for this one
     const cv::Mat& scene,       //we are looking here
     double baseAngle,
@@ -602,4 +602,56 @@ bool core::NMSForAllResultsCombined() {
     return true;
 }
 
+/* TODO
+cv::Mat computeSuperpixels(const cv::Mat& src) {
+    cv::Mat lab;
+    cv::cvtColor(src, lab, cv::COLOR_BGR2Lab);
 
+    //SLIC setup
+    int region_size = 10;
+    int ruler = 10;
+    int min_area = 10;
+
+    auto slic = cv::ximgproc::createSuperpixelSLIC(
+        lab, cv::ximgproc::SLICO, region_size, ruler
+    );
+
+    slic->iterate(10);
+    slic->enforceLabelConnectivity(min_area);
+
+    // Mask and labels
+    cv::Mat labels, mask;
+    slic->getLabels(labels);
+    slic->getLabelContourMask(mask, true);
+
+    // avg Colors
+    cv::Mat result = src.clone();
+    std::vector<cv::Vec3f> avgColors(slic->getNumberOfSuperpixels(), cv::Vec3f(0,0,0));
+    std::vector<int> counts(slic->getNumberOfSuperpixels(), 0);
+
+    for (int y = 0; y < src.rows; y++) {
+        for (int x = 0; x < src.cols; x++) {
+            int label = labels.at<int>(y, x);
+            if (label >= 0) {
+                avgColors[label] += src.at<cv::Vec3b>(y, x);
+                counts[label]++;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < avgColors.size(); i++) {
+        if (counts[i] > 0) avgColors[i] /= counts[i];
+    }
+
+    // Implement avg colors
+    for (int y = 0; y < src.rows; y++) {
+        for (int x = 0; x < src.cols; x++) {
+            int label = labels.at<int>(y, x);
+            if (label >= 0) {
+                result.at<cv::Vec3b>(y, x) = avgColors[label];
+            }
+        }
+    }
+
+    return result;
+}*/

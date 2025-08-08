@@ -66,6 +66,22 @@ if (cropped == 1 && decomposed == 1) {
             frame->imageDisplay->Refresh();
         }
 
+        //-------------------------------------------------
+        //TODO - check if works
+        nlohmann::json positionData;
+        positionData["name"] = "decomposed_" + std::to_string(decomposed) + ".jpg";
+        positionData["x"] = originalSelection.GetX();
+        positionData["y"] = originalSelection.GetY();
+        positionData["width"] = originalSelection.GetWidth();
+        positionData["height"] = originalSelection.GetHeight();
+
+        std::ofstream outFile("../tmp/metaData/decomposed_positions.json", std::ios::app);
+        if (outFile.is_open()) {
+            outFile << positionData.dump() << "\n";
+            outFile.close();
+        }
+        //-------------------------------------------------
+
         decomposed++;
         spdlog::info("onCopyButton: Image decomposedImages");
     }

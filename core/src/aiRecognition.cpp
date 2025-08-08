@@ -30,7 +30,62 @@ bool aiRecognition::startRecognition(int originalImageSizeX, int originalImageSi
 }
 
 bool aiRecognition::generateMetaData() {
-    //TODO - get the size of every decomposed image
+    //TODO - check if works
+    std::vector<nlohmann::json> allPositions;
+    std::ifstream posFile("../tmp/metaData/decomposed_positions.json");
+
+    if (posFile.is_open()) {
+        std::string line;
+        while (std::getline(posFile, line)) {
+            if (!line.empty()) {
+                allPositions.push_back(nlohmann::json::parse(line));
+            }
+        }
+        posFile.close();
+    }
+
+    std::sort(allPositions.begin(), allPositions.end(),
+        [](const nlohmann::json& a, const nlohmann::json& b) {
+            return a["width"].get<int>() * a["height"].get<int>() >
+                   b["width"].get<int>() * b["height"].get<int>();
+        });
+
+    nlohmann::json metaData;
+    for (size_t i = 0; i < allPositions.size(); ++i) {
+        auto& pos = allPositions[i];
+        nlohmann::json item;
+        item["name"] = pos["name"];
+        item["x"] = pos["x"];
+        item["y"] = pos["y"];
+        item["width"] = pos["width"];
+        item["height"] = pos["height"];
+
+        if (i > 0) {
+            auto& prev = allPositions[i-1];
+            int dx = pos["x"].get<int>() - prev["x"].get<int>();
+            int dy = pos["y"].get<int>() - prev["y"].get<int>();
+            int dw = pos["width"].get<int>() - prev["width"].get<int>();
+            int dh = pos["height"].get<int>() - prev["height"].get<int>();
+
+            item["relative_x"] = dx;
+            item["relative_y"] = dy;
+            item["relative_width"] = dw;
+            item["relative_height"] = dh;
+        }
+
+        metaData["elements"].push_back(item);
+    }
+
+    std::ofstream outFile("../tmp/metaData/decomposed_meta.json");
+    if (!outFile.is_open()) {
+        spdlog::error("generateMetaData: Failed to create metadata file");
+        return false;
+    }
+
+    outFile << metaData.dump(4);
+    outFile.close();
+
+    spdlog::info("generateMetaData: Created metadata for {} decomposed images", allPositions.size());
     return true;
 }
 

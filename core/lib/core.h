@@ -12,6 +12,8 @@
 #include <thread>
 #include <mutex>
 
+//#include <opencv2/ximgproc/slic.hpp>
+
 struct MatchResult {
     int decomposedID;
     int croppedID;
