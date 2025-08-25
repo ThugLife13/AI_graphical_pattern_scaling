@@ -54,17 +54,26 @@ void mainFrameEventHandlers::openFilePickerHandler(wxCommandEvent& evt) {
     }
 }
 
-void mainFrameEventHandlers::onSizeXSpinCtrl(wxCommandEvent &event) {
-    selectedSizeX = event.GetInt();
+void mainFrameEventHandlers::onSizeXSpinCtrl(wxCommandEvent &evt) {
+    selectedSizeX = evt.GetInt();
 }
 
-void mainFrameEventHandlers::onSizeYSpinCtrl(wxCommandEvent &event) {
-    selectedSizeY = event.GetInt();
+void mainFrameEventHandlers::onSizeYSpinCtrl(wxCommandEvent &evt) {
+    selectedSizeY = evt.GetInt();
+}
+
+void mainFrameEventHandlers::startGeneration(wxCommandEvent &evt) {
+    spdlog::info("startGeneration: Starting generation");
+    spdlog::info("startGeneration: Size X: {}", selectedSizeX);
+    spdlog::info("startGeneration: Size Y: {}", selectedSizeY);
+
+    aiGeneration* aiGen = new aiGeneration();
+    aiGen->startGeneration(selectedSizeX, selectedSizeY);
 }
 
 //AI_RECOGNITION PHASE
 void mainFrameEventHandlers::startRecognition(wxCommandEvent &evt){
     aiRecognition* aiRec = new aiRecognition();
-    aiRec->startRecognition(frame->imageSizeX, frame->imageSizeY, selectedSizeX, selectedSizeY);
+    aiRec->startRecognition();
 }
 //AI_GENERATION PHASE

@@ -45,16 +45,14 @@ public:
     wxFilePickerCtrl* filePicker;
 
     //AI_RECOGNITION PHASE
-
     wxButton* startRecognition;
-    wxStaticText* originalSizeX;
-    wxStaticText* originalSizeY;
+
+    //AI_GENERATION PHASE
     wxStaticText* newSizeX;
     wxStaticText* nexSizeY;
     wxSpinCtrl* sizeXSpinCtrl;
     wxSpinCtrl* sizeYSpinCtrl;
-
-    //AI_GENERATION PHASE
+    wxButton* startGeneration;
 
 private:
     mainFrameEventHandlers mfehandlers;

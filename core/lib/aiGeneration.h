@@ -8,7 +8,16 @@
 #include "core.h"
 
 class aiGeneration {
+    public:
+        aiGeneration();
+        ~aiGeneration();
 
+    void startGeneration(int sizeX, int sizeY);
+
+    private:
+    int newSizeX;
+    int newSizeY;
+    bool generation();
 };
 
 

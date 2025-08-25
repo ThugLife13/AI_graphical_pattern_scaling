@@ -89,10 +89,10 @@ bool imageProcessing::createColorPalette(wxString filePath) {
     }
 
     cv::Mat data;
-    image.convertTo(data, CV_32F);          // 8U -> 32F
-    data = data.reshape(1, data.total());   // from [rows x cols x 3] to [rows*cols, 3]
+    image.convertTo(data, CV_32F);
+    data = data.reshape(1, data.total());
 
-    int K = 8;          //colors in palette
+    int K = 8;
     cv::Mat labels;
     cv::Mat centers;
 
@@ -109,8 +109,7 @@ bool imageProcessing::createColorPalette(wxString filePath) {
     centers = centers.reshape(3, centers.rows);
     cv::Mat new_image(data.size(), data.type());
 
-    for (int i = 0; i < data.rows; ++i)
-    {
+    for (int i = 0; i < data.rows; ++i) {
         int cluster_idx = labels.at<int>(i, 0);
         new_image.at<cv::Vec3f>(i, 0) = centers.at<cv::Vec3f>(cluster_idx, 0);
     }
@@ -118,12 +117,36 @@ bool imageProcessing::createColorPalette(wxString filePath) {
     new_image = new_image.reshape(3, image.rows);
     new_image.convertTo(new_image, CV_8U);
 
-    if (!cv::imwrite("../tmp/images/quantized.jpg", new_image))
-    {
+    if (!cv::imwrite("../tmp/images/quantized.jpg", new_image)) {
         spdlog::error("createColorPalette: Failed to create quantized image");
         return false;
     }
-    spdlog::info("createColorPalette: Created quantized image successfully");
+
+    // Create color palette image
+    const int squareSize = 100;
+    const int rows = 2;
+    const int cols = 4;
+    cv::Mat palette(rows * squareSize, cols * squareSize, CV_8UC3);
+
+    centers.convertTo(centers, CV_8U);
+
+    for (int i = 0; i < K; ++i) {
+        cv::Vec3b color = centers.at<cv::Vec3b>(i, 0);
+
+        int startY = (i / cols) * squareSize;
+        int startX = (i % cols) * squareSize;
+
+        cv::Rect roi(startX, startY, squareSize, squareSize);
+        cv::Mat square = palette(roi);
+        square.setTo(color);
+    }
+
+    if (!cv::imwrite("../tmp/images/colorPalette.jpg", palette)) {
+        spdlog::error("createColorPalette: Failed to create color palette image");
+        return false;
+    }
+
+    spdlog::info("createColorPalette: Created quantized image and color palette successfully");
     return true;
 }
 

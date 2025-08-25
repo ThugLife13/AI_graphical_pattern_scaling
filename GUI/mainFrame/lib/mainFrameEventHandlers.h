@@ -18,11 +18,12 @@ public:
     bool newWindowOpened = false;
 
     //AI_RECOGNITION PHASE
-    void onSizeXSpinCtrl(wxCommandEvent& event);
-    void onSizeYSpinCtrl(wxCommandEvent& event);
     void startRecognition(wxCommandEvent& evt);
 
     //AI_GENERATION PHASE
+    void onSizeXSpinCtrl(wxCommandEvent& evt);
+    void onSizeYSpinCtrl(wxCommandEvent& evt);
+    void startGeneration(wxCommandEvent& evt);
 private:
     int selectedSizeX = 0;
     int selectedSizeY = 0;
